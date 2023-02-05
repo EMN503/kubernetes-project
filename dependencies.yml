@@ -1,0 +1,65 @@
+- hosts: "master-node, worker-nodes"
+  become: true
+  tasks:
+
+    - name: update and upgrade
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: true
+
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+    
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+    - name: Disable swap
+      become: true
+      ansible.builtin.shell: |
+              sudo swapoff -a
+
+
+    - name: Disable swap permanently
+      become: true
+      lineinfile:
+        path: /etc/fstab
+        # String to Search
+        regexp: "^/swap" 
+        # State is set to Absent to remove if the Searching Line is found
+        state: absent
+        
+
+    - name: Stop and Disable Ufw
+      ansible.builtin.systemd:
+        name: ufw
+        state: stopped
+        enabled: false

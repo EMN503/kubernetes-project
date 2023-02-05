@@ -1,0 +1,30 @@
+- hosts: "master-node, worker-nodes"
+  gather_facts: true
+
+  tasks:
+
+    - name: Install and configure dependencies
+      become: true
+      ansible.builtin.shell: |
+              apt-get update && apt-get install -y apt-transport-https curl
+              curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+    - name: Create kubernetes repo file
+      become: true
+      ansible.builtin.file:
+        path: "/etc/apt/sources.list.d/kubernetes.list"
+        state: "touch"
+
+    - name: Add K8s Source
+      become: true
+      ansible.builtin.blockinfile:
+        path: "/etc/apt/sources.list.d/kubernetes.list"
+        block: |
+          deb https://apt.kubernetes.io/ kubernetes-xenial main
+
+    - name: Install kubernetes
+      become: true
+      ansible.builtin.shell: |
+              apt-get update
+              apt-get install -y kubelet kubeadm kubectl
+              apt-mark hold kubelet kubeadm kubectl

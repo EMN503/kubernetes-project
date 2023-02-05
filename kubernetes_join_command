@@ -1,0 +1,1 @@
+rm -rf /etc/kubernetes/pki/ca.crt && kubeadm join 172.16.81.131:6443 --token 7d7w0b.s1f5roaeb6mwwxq5 --discovery-token-ca-cert-hash sha256:13c36e50bb1d661fff5effca5d4b7b7a5af9e5c32ca5eab26298e9170d058c9c --cri-socket unix:///run/cri-dockerd.sock --worker

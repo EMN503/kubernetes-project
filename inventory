@@ -1,0 +1,7 @@
+[master-node]
+172.16.81.131 ansible_user=root
+
+
+[worker-nodes]
+172.16.81.132 ansible_user=root
+172.16.81.133 ansible_user=root
